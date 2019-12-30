@@ -7,7 +7,29 @@ import os
 workers = cdsw.launch_workers(n=1, cpu=2, memory=4, 
                               kernel="python3",script="daskschedular.py")
 
-cdsw.list_workers()
+
+# Get schedular IP
+schedulerid = workers[0]["id"]
+listtemp = cdsw.list_workers()
+
+for x in listtemp:
+  if x["id"] == schedulerid:
+    schedulerip = x["ip_address"]
+    
+    
+print("Scheduler IP: " + schedulerip)
+
+#Scheduler protocol and port - defaults from Dask
+schproto = "tcp://"
+schport = ":8786"
+
+schloc = schproto + schedulerip + schport
+print("Scheduler URL: " + schloc)
+
+
+#Connect client to scheduler
+from dask.distributed import Client
+client = Client("tcp://10.10.173.17:8786")
 
 
 #Launch dask-scheduler
