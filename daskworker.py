@@ -2,12 +2,12 @@ import os
 
 
 print("Worker start")
-print("Master IP received"+os.environ["CDSW_MASTER_IP"])
+print("Scheduler url received"+os.environ["DASKSCHURL"])
 
-daskmasterport = ":8786"
-masterloc = "tcp://" + os.environ["CDSW_MASTER_IP"] + daskmasterport
-daskworkercmd = "dask-worker " + masterloc
+#daskmasterport = ":8786"
+#masterloc = "tcp://" + os.environ["CDSW_MASTER_IP"] + daskmasterport
+daskworkercmd = "dask-worker " + os.environ["DASKSCHURL"]
 
 os.system(daskworkercmd)
 
-print("Dask worker ended " + masterloc )
+print("Dask worker ended " + os.environ["DASKSCHURL"] )
