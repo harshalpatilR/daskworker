@@ -1,12 +1,15 @@
 import cdsw
 import os
 import socket
+import time
 
 # Launch two CDSW workers. These are engines that will run in 
 # the same project, execute a given code or script, and exit.
 dask_scheduler = cdsw.launch_workers(n=1, cpu=2, memory=4, 
                               kernel="python3",script="daskschedular.py")
 
+
+time.sleep(5)
 
 # Get schedular IP
 schedulerid = dask_scheduler[0]["id"]
@@ -22,6 +25,7 @@ print("Scheduler IP: " + schedulerip)
 #Scheduler protocol and port - defaults from Dask
 schproto = "tcp://"
 schport = ":8786"
+#schport = os.environ["CDSW_APP_PORT"]
 
 schloc = schproto + schedulerip + schport
 print("Scheduler URL: " + schloc)
@@ -41,7 +45,7 @@ s.connect((schedulerip, 8786))
 
 #Connect client to scheduler
 from dask.distributed import Client
-client = Client(processes=False)
+client = Client(schloc)
 
 
 #Launch dask-scheduler
