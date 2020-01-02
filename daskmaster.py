@@ -35,10 +35,13 @@ print("Scheduler URL: " + schloc)
 
 
 #Launch DASK workers
+#dask_workers = cdsw.launch_workers(n=1, cpu=2, memory=4, 
+#                              kernel="python3",script="dasktest.py",
+#                                  env={"DASKSCHURL": schloc})
 
-dask_workers = cdsw.launch_workers(n=1, cpu=2, memory=4, 
-                              kernel="python3",script="daskworker.py",
-                                  env={"DASKSCHURL": schloc})
+os.putenv("DASKSCHURL", schloc)
+os.system("python3 dasktest.py")
+
 
 # wait for a while until the container is launched successfully
 time.sleep(30)
