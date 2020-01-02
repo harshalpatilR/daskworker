@@ -9,7 +9,9 @@ dask_scheduler = cdsw.launch_workers(n=1, cpu=2, memory=4,
                               kernel="python3",script="daskschedular.py")
 
 
-time.sleep(5)
+# IP of launched container comes up unknown for a while
+# Wait for a while so IP is available in data structure
+time.sleep(30)
 
 # Get schedular IP
 schedulerid = dask_scheduler[0]["id"]
@@ -37,6 +39,23 @@ print("Scheduler URL: " + schloc)
 dask_workers = cdsw.launch_workers(n=1, cpu=2, memory=4, 
                               kernel="python3",script="daskworker.py",
                                   env={"DASKSCHURL": schloc})
+
+# wait for a while until the container is launched successfully
+time.sleep(30)
+
+
+
+#Launch DASK client
+
+dask_client = cdsw.launch_workers(n=1, cpu=1, memory=1, 
+                              kernel="python3",script="daskclient.py",
+                                  env={"DASKSCHURL": schloc})
+
+# wait for a while until the container is launched successfully
+time.sleep(30)
+
+
+
 
 
 #connect to scheduler explictily
