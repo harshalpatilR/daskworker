@@ -1,51 +1,65 @@
 import os
 
+schloc = os.environ["DASKSCHURL"]
 print("\n ====== Run Dask Xgboost ====== \n")
-print(" DASK scheduler URL for Xgboost Client : {} \n".format(os.environ["DASKSCHURL"]))
+print(" DASK scheduler URL for Xgboost Client : {} \n".format(schloc))
 
 #Connect client to scheduler
-schloc = os.environ["DASKSCHURL"]
 from dask.distributed import Client
 client = Client(schloc)
 
+#Use the wine dataset
 from sklearn.datasets import load_wine
 data = load_wine()
+
 from dask import dataframe as dd
-#df = dd.from_pandas(data[‘data’])
+#since the data is numpy series we will not use df = dd.from_pandas(data[‘data’])
+#dask has various ways to convert numpy and pandas to dask dataframes      
 df = dd.from_array(data['data'])
-#train, test = df.random_split([0.8, 0.2])
+df.columns = data['feature_names']
 
-#FIX NEEDED - can not be random - must be same as test
+#print a few lines
+print(" Dataframe : ")
+print(df.head())
+
+#Get target variable
 dt = dd.from_array(data['target'])
-#train_labels, test_labels = dt.random_split([0.8, 0.2])
+dt.columns = ["target"]
+      
+#print target classes example
+print(dt.head())      
 
-
-import socket    
-hostname = socket.gethostname()    
-IPAddr = socket.gethostbyname(hostname)    
-daskport = ":8786"
-
-from dask.distributed import Client
-client = Client("127.0.0.1"+daskport)
-#client = Client("tcp://10.10.181.214:8786")
-
+# train and test split
+from dask_ml.model_selection import train_test_split
+train, test, train_labels, test_labels = train_test_split(df,dt,random_state=123)      
+      
 #xgboost
 from dask_ml.xgboost import XGBClassifier
-est = XGBClassifier()
-#train.columns = ["a","b","c","d","e","f","g","h","i","j","k","l","m"]
-#est.fit(train, train_labels)
-
-# FIX done
-from dask_ml.model_selection import train_test_split
-train, test, train_labels, test_labels = train_test_split(df,dt,random_state=123)
-train.columns = ["a","b","c","d","e","f","g","h","i","j","k","l","m"]
+est = XGBClassifier()      
+      
+#fit model      
 model = est.fit(train, train_labels)
 
 #which features contribute most
 model.feature_importances_
+import seaborn
+seaborn.barplot(data=model.feature_importances_)
+      
 
 #predictions
-model.predict(test)
-accuracy = (model.predict(test)==test_labels)
-accuracy.sum().compute()
-test_labels.describe().compute()
+ypred = model.predict(test)
+
+#sample some predictions
+print(" Sample initial predictions: ")      
+print(ypred[[0,1,2,3]].compute())
+
+#ensure model is predicting all classes - not just 0
+print(" Classes other than zero predicted: ")
+print(ypred[ypred>0].compute())
+      
+#check accuracy on test set      
+from dask_ml import metrics
+print(" Model Accuracy: ")      
+print(metrics.accuracy_score(test_labels,model.predict(test)))
+      
+print("\n === End Dask Xgboost === \n")
