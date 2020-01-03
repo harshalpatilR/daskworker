@@ -19,7 +19,7 @@ df = dd.from_array(data['data'])
 df.columns = data['feature_names']
 
 #print a few lines
-print(" Dataframe : ")
+print("\n Dataframe: ")
 print(df.head())
 
 #Get target variable
@@ -27,6 +27,7 @@ dt = dd.from_array(data['target'])
 dt.columns = ["target"]
       
 #print target classes example
+print("\n Target: ")
 print(dt.head())      
 
 # train and test split
@@ -41,25 +42,29 @@ est = XGBClassifier()
 model = est.fit(train, train_labels)
 
 #which features contribute most
-model.feature_importances_
-import seaborn
-seaborn.barplot(data=model.feature_importances_)
-      
+import pandas as pd
+featureimp = pd.DataFrame(model.feature_importances_)
+featureimp.columns = ['classifier_feature_importance']
+featureimp["variable"] = data['feature_names']
+print("\n\n === Xgboost Classifier Feature Importance: === ")
+print(featureimp.sort_values(by="classifier_feature_importance", ascending=False))
+#featureimp.to_csv()
+
 
 #predictions
 ypred = model.predict(test)
 
 #sample some predictions
-print(" Sample initial predictions: ")      
-print(ypred[[0,1,2,3]].compute())
+print("\n Sample initial five predictions: ")      
+print(ypred[[0,1,2,3,4]].compute())
 
 #ensure model is predicting all classes - not just 0
-print(" Classes other than zero predicted: ")
+print("\n Check classes other than zero predicted: ")
 print(ypred[ypred>0].compute())
       
 #check accuracy on test set      
 from dask_ml import metrics
-print(" Model Accuracy: ")      
+print("\n\n Model Accuracy: ")      
 print(metrics.accuracy_score(test_labels,model.predict(test)))
       
 print("\n === End Dask Xgboost === \n")
