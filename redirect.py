@@ -14,3 +14,16 @@ class Redirect(BaseHTTPRequestHandler):
        self.end_headers()
 
 HTTPServer(("", int(sys.argv[1])), Redirect).serve_forever()
+
+
+
+from flask import Flask, redirect
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return redirect("http://10.10.168.63:8787", code=302)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
