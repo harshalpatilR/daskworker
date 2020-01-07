@@ -46,14 +46,14 @@ time.sleep(30)
 
 
 #Launch DASK Client - XGboost training job
-os.putenv("DASKSCHURL", schloc)
-os.system("python3 daskxgboost.py")
+#os.putenv("DASKSCHURL", schloc)
+#os.system("python3 daskxgboost.py")
 
 #Stop ALL worker processes - Dask Scheduler and Dask Workers
 #CDSW will close these automatically if running in background and 
 #session is stopped. But we stop explicitly as good practice
 
-cdsw.stop_workers()
+#cdsw.stop_workers()
 
 
 

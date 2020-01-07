@@ -37,15 +37,16 @@
 from flask import Flask,request,redirect,Response
 import requests
 app = Flask(__name__)
-SITE_NAME = "http://10.10.171.178:8787/"
+SITE_NAME = "http://10.10.181.158:8787/"
 @app.route('/favicon.ico') 
 def favicon(): 
     #return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
     return("Flask")
 @app.route("/")
 def index():
-    resp = requests.get("http://10.10.171.178:8787")
-    excluded_headers=["content-encoding", "content-length", "transfer-encoding", "connection"]
+    resp = requests.get("http://10.10.181.158:8787")
+    #excluded_headers=["content-encoding", "content-length", "transfer-encoding", "connection"]
+    excluded_headers=[]
     headers = [(name, value) for (name, value) in  resp.raw.headers.items() if name.lower() not in excluded_headers]
     response = Response(resp.content, resp.status_code, headers)
     return response
@@ -63,7 +64,16 @@ def proxy(path):
         excluded_headers = []
         headers = [(name, value) for (name, value) in  resp.raw.headers.items() if name.lower() not in excluded_headers]
         response = Response(resp.content, resp.status_code, headers)
-        return response
+
+#@app.route('/', defaults={'path': ''})
+#@app.route('/<path:path>')
+#def catch_all(path):
+#    resp = requests.get(f"{SITE_NAME}{path}")
+#    excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+#    #excluded_headers = []
+#    headers = [(name, value) for (name, value) in  resp.raw.headers.items() if name.lower() not in excluded_headers]
+#    response = Response(resp.content, resp.status_code, headers)
+#    return response
 
 if __name__ == "__main__":
     app.run(debug = False,port=8090)
