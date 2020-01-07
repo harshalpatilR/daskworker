@@ -1,8 +1,8 @@
 import os
 
 
-print("Worker start")
-print("Scheduler url received"+os.environ["DASKSCHURL"])
+print(" Worker start")
+print(" Scheduler url received "+os.environ["DASKSCHURL"])
 
 #daskmasterport = ":8786"
 #masterloc = "tcp://" + os.environ["CDSW_MASTER_IP"] + daskmasterport

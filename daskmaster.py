@@ -23,7 +23,7 @@ for x in listtemp:
     schedulerip = x["ip_address"]
     
     
-print("Scheduler IP: " + schedulerip)
+print(" Scheduler IP: " + schedulerip)
 
 #Scheduler protocol and port - defaults from Dask
 schproto = "tcp://"
@@ -46,7 +46,7 @@ time.sleep(30)
 
 
 #Launch DASK Client - XGboost training job
-#os.putenv("DASKSCHURL", schloc)
+os.putenv("DASKSCHURL", schloc)
 #os.system("python3 daskxgboost.py")
 
 #Stop ALL worker processes - Dask Scheduler and Dask Workers
