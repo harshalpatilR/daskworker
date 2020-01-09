@@ -37,21 +37,21 @@
 from flask import Flask,request,redirect,Response
 import requests
 app = Flask(__name__)
-SITE_NAME = "http://10.10.181.158:8787/"
+SITE_NAME = "http://10.10.162.240:8787/"
 @app.route('/favicon.ico') 
 def favicon(): 
     #return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
     return("Flask")
 @app.route("/")
 def index():
-    resp = requests.get("http://10.10.181.158:8787")
-    #excluded_headers=["content-encoding", "content-length", "transfer-encoding", "connection"]
-    excluded_headers=[]
+    resp = requests.get("http://10.10.162.240:8787")
+    excluded_headers=["content-encoding", "content-length", "transfer-encoding", "connection"]
+    #excluded_headers=[]
     headers = [(name, value) for (name, value) in  resp.raw.headers.items() if name.lower() not in excluded_headers]
     response = Response(resp.content, resp.status_code, headers)
     return response
     #return "Flask is running!"
-@app.route("/<path:path>",methods=["GET"])
+@app.route("/<path:path>",methods=["GET","POST","DELETE"])
 def proxy(path):
     global SITE_NAME
     if request.method=="GET":
@@ -60,10 +60,23 @@ def proxy(path):
         print(path)
         print(f"{SITE_NAME}{path}")
         resp = requests.get(f"{SITE_NAME}{path}")
+        excluded_headers=["content-encoding", "content-length", "transfer-encoding", "connection"]
         #excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
-        excluded_headers = []
+        #excluded_headers = []
         headers = [(name, value) for (name, value) in  resp.raw.headers.items() if name.lower() not in excluded_headers]
+        response = Response(resp.content, resp.status_code, headers)    
+    elif request.method=="POST":
+        resp = requests.post(f"{SITE_NAME}{path}",json=request.get_json())
+        excluded_headers=["content-encoding", "content-length", "transfer-encoding", "connection"]
+        #excluded_headers = [‘content-encoding’, ‘content-length’, ‘transfer-encoding’, ‘connection’]
+        #excluded_headers=[]
+        headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
         response = Response(resp.content, resp.status_code, headers)
+        return response
+    elif request.method=="DELETE":
+        resp = requests.delete(f"{SITE_NAME}{path}").content
+        response = Response(resp.content, resp.status_code, headers)
+        return response
 
 #@app.route('/', defaults={'path': ''})
 #@app.route('/<path:path>')
