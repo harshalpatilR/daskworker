@@ -35,7 +35,7 @@ print(" Scheduler URL: " + schloc)
 
 # Launch at least one Dask Worker
 
-dask_client = cdsw.launch_workers(n=2, cpu=2, memory=4, 
+dask_client = cdsw.launch_workers(n=1, cpu=2, memory=4, 
                               kernel="python3",script="daskworker.py",
                                   env={"DASKSCHURL": schloc})
 
@@ -44,16 +44,19 @@ time.sleep(30)
 
 
 
-
-#Launch DASK Client - XGboost training job
 os.putenv("DASKSCHURL", schloc)
+#Launch DASK Client - XGboost training job
 #os.system("python3 daskxgboost.py")
+
+#Launch DASK test 
+os.system("python3 dasktest.py")
+
 
 #Stop ALL worker processes - Dask Scheduler and Dask Workers
 #CDSW will close these automatically if running in background and 
 #session is stopped. But we stop explicitly as good practice
 
-#cdsw.stop_workers()
+cdsw.stop_workers()
 
 
 

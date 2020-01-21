@@ -5,3 +5,7 @@ __pycache__
 .*
 !.gitignore
 *.csv
+*.lock
+*.dirlock
+_dasksch_
+_daskworker_
