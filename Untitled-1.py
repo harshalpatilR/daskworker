@@ -1,1 +1,1 @@
-!dask-scheduler --dashboard-address 0.0.0.0:8090 --no-show 
+!dask-scheduler --host 0.0.0.0 --dashboard-address :8080
