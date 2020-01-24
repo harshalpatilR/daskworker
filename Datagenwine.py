@@ -28,7 +28,7 @@ stdvec = descdf.loc["std_used"]
 
 ################
 # no of records to generate in new dataframe 
-records=4
+records=8000000
 nrows=len(df)
 
 ################
@@ -53,13 +53,15 @@ for i in range(records):
   
   generated_rows[i]=random_row_record
   
+  if(i%100000==0):
+    print(" == Records Generated: " + str(i))
 
 ####  
 gendf = pd.DataFrame.from_dict(generated_rows,orient="index",
                                columns=generated_fields)
 
 ####
-opfile = "datagenwine.csv"
+opfile = "winedatagen.csv"
 if os.path.exists(opfile):
   print(" === file found - deleted === ")
   os.remove(opfile)
