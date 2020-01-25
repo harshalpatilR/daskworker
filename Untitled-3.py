@@ -18,3 +18,8 @@ df.tail()
 from IPython.display import IFrame
 from IPython.core.display import display
 display(IFrame("http://10.10.9.12:8787", '700px', '450px'))
+
+
+with open("_dasksch_/dasklog.txt","r") as jfile:
+  schfile = json.load(jfile)
+  

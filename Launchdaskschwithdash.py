@@ -28,6 +28,12 @@ dask_client = cdsw.launch_workers(n=1, cpu=4, memory=8,
                               kernel="python3",script="daskworker.py",
                                   env={"DASKSCHURL": schloc})
 
+time.sleep(10)
+
+dask_client = cdsw.launch_workers(n=1, cpu=4, memory=8, 
+                              kernel="python3",script="daskworker.py",
+                                  env={"DASKSCHURL": schloc})
+
 # wait for a while until the container is launched successfully
 time.sleep(10)
 
@@ -36,5 +42,5 @@ if not os.path.isdir("_dasksch_"):
   os.mkdir("_dasksch_")
 
 #Launch dask-scheduler
-os.system("dask-scheduler --host 0.0.0.0 --dashboard-address :8080 --local-directory _dasksch_")
+os.system("dask-scheduler --host 0.0.0.0 --dashboard-address :8080 --scheduler-file _dasksch_/dasklog.txt")
 
